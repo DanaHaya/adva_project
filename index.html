@@ -1,0 +1,704 @@
+﻿<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>עכברונית - למדי עברית בכיף</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#FFB6C1">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;700;900&display=swap');
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{
+            --pink:#ffd6e7;--pink-dark:#ff8fab;
+            --blue:#cde7ff;--green:#d6ffd9;
+            --yellow:#fff3b0;--lavender:#E8D5F5;
+            --bg:#fefefe;--text:#4A3728;--radius:24px;
+        }
+        body{font-family:'Rubik',Arial,sans-serif;background:var(--bg);min-height:100vh;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+        
+        /* === SCREENS === */
+        .screen{display:none;min-height:100vh;padding:20px;max-width:500px;margin:0 auto;flex-direction:column;align-items:center;justify-content:center}
+        .screen.active{display:flex}
+
+        /* === WELCOME === */
+        .welcome-mascot{font-size:6em;animation:bounce 2s ease-in-out infinite;margin-bottom:16px}
+        @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+
+        /* === LIVING MASCOT === */
+        .mascot{width:120px;height:120px;border-radius:50%;object-fit:cover;cursor:pointer;transition:transform 0.3s ease;animation:breathe 3s infinite ease-in-out;box-shadow:0 6px 20px rgba(255,143,171,0.25)}
+        .mascot.talking{animation:talk 0.4s infinite}
+        .mascot.happy{animation:happy-bounce 0.6s ease}
+        @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+        @keyframes talk{0%{transform:scale(1.05) rotate(-2deg)}50%{transform:scale(1.12) rotate(2deg)}100%{transform:scale(1.05) rotate(-2deg)}}
+        @keyframes happy-bounce{0%{transform:scale(1)}30%{transform:scale(1.25)}60%{transform:scale(0.95)}100%{transform:scale(1)}}
+        .mascot-container{position:relative;display:inline-block}
+        .mascot-bubble{position:absolute;bottom:-30px;left:50%;transform:translateX(-50%);background:white;border-radius:14px;padding:6px 12px;font-size:0.8em;font-weight:600;color:var(--pink-dark);white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,0.08);opacity:0;transition:opacity 0.3s;pointer-events:none}
+        .mascot-bubble.show{opacity:1}
+        .mascot-eyes{position:absolute;top:35%;left:50%;transform:translateX(-50%);width:30px;height:8px;display:flex;gap:8px;pointer-events:none}
+        .mascot-eye{width:8px;height:8px;background:#333;border-radius:50%;animation:blink 4s infinite}
+        @keyframes blink{0%,96%,100%{transform:scaleY(1)}97%{transform:scaleY(0.1)}}
+        .welcome-title{font-size:2.2em;font-weight:900;color:var(--pink-dark);margin-bottom:8px}
+        .welcome-sub{font-size:1.2em;color:var(--text);opacity:0.7;margin-bottom:30px}
+        .start-btn{background:var(--blue);color:var(--text);border:none;border-radius:30px;padding:22px 50px;font-size:1.5em;font-weight:700;cursor:pointer;box-shadow:0 8px 25px rgba(0,0,0,0.08);transition:all 0.2s;font-family:'Rubik',sans-serif}
+        .start-btn:active{transform:scale(0.95)}
+
+        /* === HOME === */
+        .home-header{display:flex;align-items:center;justify-content:space-between;width:100%;margin-bottom:20px;padding:12px 16px;background:rgba(255,255,255,0.8);border-radius:var(--radius);backdrop-filter:blur(8px)}
+        .home-mascot{font-size:2.2em}
+        .home-stars{font-size:1.1em;font-weight:700;color:var(--pink-dark);display:flex;align-items:center;gap:4px}
+        .category-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%}
+        .cat-card{background:white;border-radius:var(--radius);padding:28px 16px;text-align:center;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 15px rgba(0,0,0,0.06);border:3px solid transparent}
+        .cat-card:active{transform:scale(0.96);border-color:var(--pink-dark)}
+        .cat-card-emoji{font-size:3.2em;margin-bottom:10px;display:block}
+        .cat-card-name{font-size:1.3em;font-weight:700;color:var(--text)}
+
+        /* === LEARN SCREEN === */
+        .learn-header{display:flex;align-items:center;justify-content:space-between;width:100%;margin-bottom:16px}
+        .back-btn{background:none;border:none;font-size:1.8em;cursor:pointer;padding:8px}
+        .learn-title{font-size:1.3em;font-weight:700;color:var(--text)}
+        .word-card{background:white;border-radius:var(--radius);padding:30px;text-align:center;width:100%;box-shadow:0 8px 30px rgba(0,0,0,0.08);margin-bottom:16px}
+        .word-emoji{font-size:5em;margin-bottom:12px;display:block}
+        .word-hebrew{font-size:2.2em;font-weight:900;color:var(--text);margin-bottom:8px}
+        .word-nikud{font-size:1.8em;color:var(--pink-dark);margin-bottom:12px}
+        .speak-btn{background:linear-gradient(135deg,var(--pink),var(--pink-dark));color:white;border:none;border-radius:20px;padding:14px 30px;font-size:1.2em;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;margin:0 auto;font-family:'Rubik',sans-serif}
+        .speak-btn:active{transform:scale(0.95)}
+        .nav-dots{display:flex;gap:8px;justify-content:center;margin:12px 0}
+        .nav-dot{width:10px;height:10px;border-radius:50%;background:#ddd}
+        .nav-dot.active{background:var(--pink-dark)}
+        .word-nav{display:flex;gap:12px;justify-content:center;margin-top:10px}
+        .word-nav-btn{background:white;border:2px solid var(--pink);border-radius:50%;width:50px;height:50px;font-size:1.3em;cursor:pointer;display:flex;align-items:center;justify-content:center}
+        .word-nav-btn:active{background:var(--pink-light)}
+
+        /* === GAME SCREEN === */
+        .game-prompt{font-size:1.3em;font-weight:700;color:var(--text);text-align:center;margin-bottom:16px}
+        .game-target{font-size:2em;font-weight:900;color:var(--pink-dark);text-align:center;margin-bottom:20px}
+        .game-options{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%}
+        .game-option{background:white;border:3px solid #EEE;border-radius:var(--radius);padding:20px;text-align:center;font-size:3em;cursor:pointer;transition:all 0.2s}
+        .game-option:active{transform:scale(0.96)}
+        .game-option.correct{border-color:var(--mint);background:#E8FFF0;animation:pop 0.4s}
+        .game-option.wrong{border-color:#FFD0D0;background:#FFF0F0}
+        @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+        .success-msg{font-size:1.5em;font-weight:700;color:var(--pink-dark);text-align:center;margin-top:12px;min-height:40px}
+
+        /* === AAC SCREEN === */
+        .aac-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%}
+        .aac-btn{background:white;border:3px solid var(--lavender);border-radius:var(--radius);padding:20px 12px;text-align:center;cursor:pointer;transition:all 0.2s}
+        .aac-btn:active{transform:scale(0.95);border-color:var(--pink)}
+        .aac-btn-emoji{font-size:2.5em;display:block;margin-bottom:6px}
+        .aac-btn-text{font-size:1.1em;font-weight:700;color:var(--text)}
+
+        /* === BOTTOM NAV === */
+        .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;padding:8px 12px 16px;display:flex;justify-content:space-around;box-shadow:0 -2px 15px rgba(0,0,0,0.06);border-radius:20px 20px 0 0;z-index:100}
+        .bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 12px;border-radius:12px;transition:all 0.2s}
+        .bnav-item.active{background:var(--pink-light)}
+        .bnav-icon{font-size:1.6em}
+        .bnav-label{font-size:0.6em;font-weight:600;color:#999}
+        .bnav-item.active .bnav-label{color:var(--pink-dark)}
+
+        /* === STAR ANIMATION === */
+        .star-float{position:fixed;font-size:2em;z-index:9999;pointer-events:none;animation:star-up 1s ease forwards}
+        @keyframes star-up{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:translateY(-60px) scale(1.5)}}
+    </style>
+</head>
+<body>
+</body>
+</html>
+
+<!-- Welcome Screen -->
+<div class="screen active" id="welcomeScreen">
+    <div class="mascot-container">
+        <img src="minnie.png" class="mascot" id="mainMascot" onclick="mascotClick()" style="width:140px;height:140px">
+        <div class="mascot-bubble" id="mainBubble"></div>
+    </div>
+    <div class="welcome-title" onclick="speakHebrew('שלום אדווה')">שלום אדווה 💗</div>
+    <div class="welcome-sub">בואי נלמד ביחד</div>
+    <button class="start-btn" onclick="goHome()">בואי ללמוד</button>
+</div>
+
+<!-- Home Screen -->
+<div class="screen" id="homeScreen">
+    <div class="home-header">
+        <div class="home-mascot" onclick="mascotClick()" style="cursor:pointer"><img src="minnie.png" class="mascot" id="homeMascot" style="width:70px;height:70px"></div>
+        <div id="mascotBubble" style="font-size:0.85em;color:var(--pink-dark);font-weight:600;max-width:180px;text-align:center"></div>
+        <div class="home-stars">⭐ <span id="starCount">0</span></div>
+    </div>
+    <div class="category-grid">
+        <div class="cat-card" style="background:var(--blue)" onclick="openCatMenu()"><span class="cat-card-emoji">📚</span><div class="cat-card-name">מילים</div></div>
+        <div class="cat-card" style="background:var(--green)" onclick="openGameMenu()"><span class="cat-card-emoji">🎮</span><div class="cat-card-name">משחקים</div></div>
+        <div class="cat-card" style="background:var(--pink)" onclick="openShop()"><span class="cat-card-emoji">🛍️</span><div class="cat-card-name">חנות</div></div>
+        <div class="cat-card" style="background:var(--yellow)" onclick="openAAC()"><span class="cat-card-emoji">💬</span><div class="cat-card-name">לדבר</div></div>
+    </div>
+</div>
+
+<!-- Category Menu -->
+<div class="screen" id="catMenuScreen">
+    <div class="learn-header">
+        <button class="back-btn" onclick="goHome()">→</button>
+        <div class="learn-title">📚 בחרי נושא</div>
+        <div></div>
+    </div>
+    <div class="category-grid">
+        <div class="cat-card" onclick="openCategory('animals')"><span class="cat-card-emoji">🐱</span><div class="cat-card-name">חיות</div></div>
+        <div class="cat-card" onclick="openCategory('colors')"><span class="cat-card-emoji">🌈</span><div class="cat-card-name">צבעים</div></div>
+        <div class="cat-card" onclick="openCategory('food')"><span class="cat-card-emoji">🍎</span><div class="cat-card-name">אוכל</div></div>
+        <div class="cat-card" onclick="openCategory('toys')"><span class="cat-card-emoji">🧸</span><div class="cat-card-name">צעצועים</div></div>
+        <div class="cat-card" onclick="openCategory('family')"><span class="cat-card-emoji">👨‍👩‍👧</span><div class="cat-card-name">משפחה</div></div>
+        <div class="cat-card" onclick="openCategory('feelings')"><span class="cat-card-emoji">😊</span><div class="cat-card-name">רגשות</div></div>
+    </div>
+</div>
+
+<!-- Game Menu -->
+<div class="screen" id="gameMenuScreen">
+    <div class="learn-header">
+        <button class="back-btn" onclick="goHome()">→</button>
+        <div class="learn-title">🎮 משחקים</div>
+        <div></div>
+    </div>
+    <div class="category-grid">
+        <div class="cat-card" onclick="openGame()"><span class="cat-card-emoji">🔍</span><div class="cat-card-name">מצאי</div></div>
+        <div class="cat-card" onclick="openBubbleGame()"><span class="cat-card-emoji">🫧</span><div class="cat-card-name">בועות</div></div>
+        <div class="cat-card" onclick="openAlefBet()"><span class="cat-card-emoji">אב</span><div class="cat-card-name">אותיות</div></div>
+        <div class="cat-card" onclick="openNumbers()"><span class="cat-card-emoji">123</span><div class="cat-card-name">מספרים</div></div>
+    </div>
+</div>
+
+<!-- Shop Screen -->
+<div class="screen" id="shopScreen">
+    <div class="learn-header">
+        <button class="back-btn" onclick="goHome()">→</button>
+        <div class="learn-title">🛍️ חנות</div>
+        <div class="home-stars">⭐ <span id="shopStars">0</span></div>
+    </div>
+    <div class="category-grid" id="shopGrid"></div>
+</div>
+
+<!-- Learn Screen -->
+<div class="screen" id="learnScreen">
+    <div class="learn-header">
+        <button class="back-btn" onclick="goHome()">→</button>
+        <div class="learn-title" id="learnTitle">חיות</div>
+        <div></div>
+    </div>
+    <div class="word-card">
+        <span class="word-emoji" id="wordEmoji">🐱</span>
+        <div class="word-hebrew" id="wordHebrew">חתול</div>
+        <button class="speak-btn" onclick="speakCurrent()">🔊 שמעי</button>
+        <button class="speak-btn" onclick="speakCurrent()" style="background:linear-gradient(135deg,#E8D5F5,#D4B8F0);margin-top:8px">🔁 שוב</button>
+    </div>
+    <div class="nav-dots" id="navDots"></div>
+    <div class="word-nav">
+        <button class="word-nav-btn" onclick="prevWord()">→</button>
+        <button class="word-nav-btn" onclick="nextWord()">←</button>
+    </div>
+</div>
+
+<!-- Game Screen -->
+<div class="screen" id="gameScreen">
+    <div class="learn-header">
+        <button class="back-btn" onclick="goHome()">→</button>
+        <div class="learn-title">🎮 מצאי את התמונה</div>
+        <div></div>
+    </div>
+    <div class="game-prompt">?איפה</div>
+    <div class="game-target" id="gameTarget">חתול</div>
+    <div class="game-options" id="gameOptions"></div>
+    <div class="success-msg" id="successMsg"></div>
+</div>
+
+<!-- AAC Screen -->
+<div class="screen" id="aacScreen">
+    <div class="learn-header">
+        <button class="back-btn" onclick="goHome()">→</button>
+        <div class="learn-title">💬 תקשורת</div>
+        <div></div>
+    </div>
+    <div class="aac-grid">
+        <div class="aac-btn" onclick="speakAAC('אני')"><span class="aac-btn-emoji">🙋‍♀️</span><div class="aac-btn-text">אני</div></div>
+        <div class="aac-btn" onclick="speakAAC('אמא')"><span class="aac-btn-emoji">👩</span><div class="aac-btn-text">אמא</div></div>
+        <div class="aac-btn" onclick="speakAAC('אבא')"><span class="aac-btn-emoji">👨</span><div class="aac-btn-text">אבא</div></div>
+        <div class="aac-btn" onclick="speakAAC('מים')"><span class="aac-btn-emoji">💧</span><div class="aac-btn-text">מים</div></div>
+        <div class="aac-btn" onclick="speakAAC('עוד')"><span class="aac-btn-emoji">➕</span><div class="aac-btn-text">עוד</div></div>
+        <div class="aac-btn" onclick="speakAAC('רוצה')"><span class="aac-btn-emoji">🙋</span><div class="aac-btn-text">רוצה</div></div>
+        <div class="aac-btn" onclick="speakAAC('לא')"><span class="aac-btn-emoji">🚫</span><div class="aac-btn-text">לא</div></div>
+        <div class="aac-btn" onclick="speakAAC('כן')"><span class="aac-btn-emoji">✅</span><div class="aac-btn-text">כן</div></div>
+        <div class="aac-btn" onclick="speakAAC('לשחק')"><span class="aac-btn-emoji">🎈</span><div class="aac-btn-text">לשחק</div></div>
+        <div class="aac-btn" onclick="speakAAC('חיבוק')"><span class="aac-btn-emoji">🤗</span><div class="aac-btn-text">חיבוק</div></div>
+        <div class="aac-btn" onclick="speakAAC('אוכל')"><span class="aac-btn-emoji">🍽️</span><div class="aac-btn-text">אוכל</div></div>
+    </div>
+</div>
+
+<!-- Alef-Bet Game -->
+<div class="screen" id="alefbetScreen">
+    <div class="learn-header">
+        <button class="back-btn" onclick="goHome()">→</button>
+        <div class="learn-title">אב אותיות</div>
+        <div></div>
+    </div>
+    <div class="game-prompt">?איפה האות</div>
+    <div class="game-target" id="abTarget" style="font-size:2.5em">א</div>
+    <div class="game-options" id="abOptions"></div>
+    <div class="success-msg" id="abSuccess"></div>
+</div>
+
+<!-- Numbers Game -->
+<div class="screen" id="numbersScreen">
+    <div class="learn-header">
+        <button class="back-btn" onclick="goHome()">→</button>
+        <div class="learn-title">123 מספרים</div>
+        <div></div>
+    </div>
+    <div class="game-prompt">?איפה המספר</div>
+    <div class="game-target" id="numTarget" style="font-size:2.5em">3</div>
+    <div class="game-options" id="numOptions"></div>
+    <div class="success-msg" id="numSuccess"></div>
+</div>
+
+<!-- Bubble Game -->
+<div class="screen" id="bubbleScreen">
+    <div class="learn-header">
+        <button class="back-btn" onclick="goHome()">→</button>
+        <div class="learn-title">🫧 בועות</div>
+        <div></div>
+    </div>
+    <div id="bubbleArea" style="width:100%;height:60vh;position:relative;overflow:hidden;border-radius:20px;background:linear-gradient(180deg,#D6EEFF,#E8D5F5)"></div>
+</div>
+
+<!-- Bottom Nav -->
+<div class="bottom-nav" id="bottomNav" style="display:none">
+    <div class="bnav-item active" onclick="goHome()"><span class="bnav-icon">🏠</span><span class="bnav-label">בית</span></div>
+    <div class="bnav-item" onclick="openCategory('animals')"><span class="bnav-icon">📚</span><span class="bnav-label">מילים</span></div>
+    <div class="bnav-item" onclick="openGameMenu()"><span class="bnav-icon">🎮</span><span class="bnav-label">משחקים</span></div>
+    <div class="bnav-item" onclick="openAAC()"><span class="bnav-icon">💬</span><span class="bnav-label">תקשורת</span></div>
+</div>
+
+<script>
+// === DATA ===
+const categories = {
+    animals: {title:'חיות', items:[
+        {emoji:'🐱',word:'חָתוּל'},{emoji:'🐶',word:'כֶּלֶב'},{emoji:'🐟',word:'דָּג'},{emoji:'🐦',word:'צִיפּוֹר'},
+        {emoji:'🐰',word:'אַרְנָב'},{emoji:'🐻',word:'דֹּב'},{emoji:'🦁',word:'אַרְיֵה'},{emoji:'🐸',word:'צְפַרְדֵּעַ'},
+        {emoji:'🐢',word:'צָב'},{emoji:'🦋',word:'פַּרְפַּר'}
+    ]},
+    colors: {title:'צבעים', items:[
+        {emoji:'🔴',word:'אָדוֹם'},{emoji:'🔵',word:'כָּחוֹל'},{emoji:'🟢',word:'יָרוֹק'},{emoji:'🟡',word:'צָהוֹב'},
+        {emoji:'🟠',word:'כָּתוֹם'},{emoji:'🟣',word:'סָגוֹל'},{emoji:'🩷',word:'וָרוֹד'},{emoji:'⚫',word:'שָׁחוֹר'},
+        {emoji:'⚪',word:'לָבָן'},{emoji:'🟤',word:'חוּם'}
+    ]},
+    food: {title:'אוכל', items:[
+        {emoji:'🍎',word:'תַּפּוּחַ'},{emoji:'🍌',word:'בָּנָנָה'},{emoji:'🍞',word:'לֶחֶם'},{emoji:'🥛',word:'חָלָב'},
+        {emoji:'🥚',word:'בֵּיצָה'},{emoji:'🍕',word:'פִּיצָה'},{emoji:'🍦',word:'גְּלִידָה'},{emoji:'🥕',word:'גֶּזֶר'},
+        {emoji:'🍇',word:'עֲנָבִים'},{emoji:'🍉',word:'אֲבַטִּיחַ'}
+    ]},
+    toys: {title:'צעצועים', items:[
+        {emoji:'🧸',word:'דוּבִּי'},{emoji:'⚽',word:'כַּדּוּר'},{emoji:'🎈',word:'בָּלוֹן'},{emoji:'🪁',word:'עֲפִיפוֹן'},
+        {emoji:'🚗',word:'מְכוֹנִית'},{emoji:'🎨',word:'צִיּוּר'},{emoji:'🧩',word:'פַּאזֶל'},{emoji:'🪀',word:'יוֹיוֹ'}
+    ]},
+    family: {title:'משפחה', items:[
+        {emoji:'👩',word:'אִמָּא'},{emoji:'👨',word:'אַבָּא'},{emoji:'👶',word:'תִּינוֹק'},{emoji:'👧',word:'אָחוֹת'},
+        {emoji:'👦',word:'אָח'},{emoji:'👵',word:'סָבְתָא'},{emoji:'👴',word:'סָבָא'}
+    ]},
+    feelings: {title:'רגשות', items:[
+        {emoji:'😊',word:'שָׂמֵחַ'},{emoji:'😢',word:'עָצוּב'},{emoji:'😠',word:'כּוֹעֵס'},{emoji:'😨',word:'מְפַחֵד'},
+        {emoji:'🥰',word:'אוֹהֵב'},{emoji:'😴',word:'עָיֵיף'},{emoji:'😲',word:'מֻפְתָּע'}
+    ]}
+};
+
+// === STATE ===
+let stars = parseInt(localStorage.getItem('hebrewStars')||'0');
+let currentCat = 'animals';
+let currentIdx = 0;
+
+// === SMART LEARNING ENGINE ===
+let wordScores = JSON.parse(localStorage.getItem('hebrewScores')||'{}');
+function getScore(word){return wordScores[word]||0;}
+function addScore(word,val){
+    wordScores[word]=(wordScores[word]||0)+val;
+    localStorage.setItem('hebrewScores',JSON.stringify(wordScores));
+}
+// Sort items: weak words first
+function getSmartOrder(items){
+    return [...items].sort((a,b)=>getScore(a.word)-getScore(b.word));
+}
+
+// === MASCOT REACTIONS ===
+const mascotPhrases = [
+    'שלום אדווה','בואי ללמוד','אדווה מדהימה','איזה כיף ללמוד איתך',
+    'אני אוהבת אותך אדווה','אדווה חכמה','בואי נמשיך','יופי של ילדה',
+    'היי מתוקה','אדווה הכי טובה','אני גאה בך','אדווה כוכבת'
+];
+
+function setMascotState(state){
+    const mascots = document.querySelectorAll('.mascot');
+    mascots.forEach(m=>{
+        m.classList.remove('talking','happy');
+        if(state) m.classList.add(state);
+    });
+}
+
+function mascotClick(){
+    const phrase = mascotPhrases[Math.floor(Math.random()*mascotPhrases.length)];
+    mascotTalk(phrase);
+}
+
+function mascotTalk(text){
+    setMascotState('talking');
+    showBubble(text);
+    speakHebrew(text);
+    setTimeout(()=>setMascotState(''),2500);
+}
+
+function mascotHappy(){
+    setMascotState('happy');
+    setTimeout(()=>setMascotState(''),700);
+}
+
+function showBubble(text){
+    const bubbles = [document.getElementById('mainBubble'),document.getElementById('mascotBubble')];
+    bubbles.forEach(b=>{if(b){b.innerText=text;b.classList.add('show');setTimeout(()=>b.classList.remove('show'),3000);}});
+}
+
+function mascotSpeak(text){mascotTalk(text||mascotPhrases[Math.floor(Math.random()*mascotPhrases.length)]);}
+function mascotSuccess(){
+    const p=['כל הכבוד אדווה','אדווה אלופה','מעולה אדווה','אדווה ילדה חכמה','מדהים אדווה'];
+    mascotHappy();
+    mascotTalk(p[Math.floor(Math.random()*p.length)]);
+}
+function mascotEncourage(){
+    const p=['בואי ננסה שוב יחד','לא נורא, ננסה עוד פעם','את יכולה'];
+    mascotTalk(p[Math.floor(Math.random()*p.length)]);
+}
+
+// Idle behavior - occasionally speak
+setInterval(()=>{
+    if(Math.random()>0.85){
+        const idle = ['היי מתוקה','אני כאן','בואי נְשַׂחֵק'];
+        showBubble(idle[Math.floor(Math.random()*idle.length)]);
+    }
+},10000);
+
+// === SPEECH ===
+function speakHebrew(text){
+    const clean = text.replace(/[\u0591-\u05C7]/g,'');
+    
+    // Try Google TTS first (works on desktop)
+    try{
+        const audio = new Audio('https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=he&q='+encodeURIComponent(clean));
+        audio.playbackRate = 0.85;
+        audio.play().then(()=>{}).catch(()=>{
+            // If Google TTS fails (mobile), use Web Speech API
+            useSpeechAPI(clean);
+        });
+    }catch(e){
+        useSpeechAPI(clean);
+    }
+}
+
+function useSpeechAPI(clean){
+    if(!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(clean);
+    u.lang='he-IL'; u.rate=0.75; u.pitch=1.1;
+    const voices = window.speechSynthesis.getVoices();
+    const heb = voices.find(v=>v.lang.includes('he'));
+    if(heb) u.voice = heb;
+    window.speechSynthesis.speak(u);
+}
+
+// Load voices
+if('speechSynthesis' in window){
+    window.speechSynthesis.getVoices();
+    window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();
+}
+
+function speakCurrent(){
+    const items = categories[currentCat].items;
+    speakHebrew(items[currentIdx].word);
+}
+
+function speakAAC(word){
+    speakHebrew(word);
+    showStar();
+}
+
+// === NAVIGATION ===
+function showScreen(id){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.getElementById('bottomNav').style.display = id==='welcomeScreen'?'none':'flex';
+}
+
+function goHome(){
+    showScreen('homeScreen');
+    document.getElementById('starCount').innerText = stars;
+    // Mascot greets
+    const bubble = document.getElementById('mascotBubble');
+    const greetings = ['היי אדווה','בואי ללמוד','מה נלמד היום?','שמחה לראות אותך אדווה'];
+    const g = greetings[Math.floor(Math.random()*greetings.length)];
+    bubble.innerText = g;
+    speakHebrew(g);
+    setTimeout(()=>bubble.innerText='',3000);
+}
+
+function openCategory(cat){
+    currentCat = cat;
+    currentIdx = 0;
+    document.getElementById('learnTitle').innerText = categories[cat].title;
+    renderWord();
+    showScreen('learnScreen');
+}
+
+function renderWord(){
+    const items = categories[currentCat].items;
+    const item = items[currentIdx];
+    document.getElementById('wordEmoji').innerText = item.emoji;
+    document.getElementById('wordHebrew').innerText = item.word;
+    // Dots
+    document.getElementById('navDots').innerHTML = items.map((_,i)=>`<div class="nav-dot${i===currentIdx?' active':''}"></div>`).join('');
+    // Auto speak
+    setTimeout(()=>speakHebrew(item.word),300);
+}
+
+function nextWord(){
+    const items = categories[currentCat].items;
+    currentIdx = (currentIdx+1) % items.length;
+    renderWord();
+}
+function prevWord(){
+    const items = categories[currentCat].items;
+    currentIdx = (currentIdx-1+items.length) % items.length;
+    renderWord();
+}
+
+// === GAME ===
+function openGame(){
+    showScreen('gameScreen');
+    newGameRound();
+}
+
+function newGameRound(){
+    // Pick random category and word - prioritize weak words
+    const cats = Object.keys(categories);
+    const allItems = cats.flatMap(c=>categories[c].items);
+    // Sort by score (lowest first = hardest for the child)
+    const sorted = [...allItems].sort((a,b)=>getScore(a.word)-getScore(b.word));
+    // Pick from the weakest 50%
+    const pool = sorted.slice(0, Math.max(5, Math.floor(sorted.length/2)));
+    const correct = pool[Math.floor(Math.random()*pool.length)];
+    
+    // Pick 3 wrong options
+    let options = [correct];
+    while(options.length<4){
+        const r = allItems[Math.floor(Math.random()*allItems.length)];
+        if(!options.find(o=>o.emoji===r.emoji)) options.push(r);
+    }
+    options.sort(()=>Math.random()-0.5);
+    
+    document.getElementById('gameTarget').innerText = correct.word;
+    document.getElementById('successMsg').innerText = '';
+    document.getElementById('gameOptions').innerHTML = options.map(o=>
+        `<div class="game-option" onclick="checkGame(this,'${o.emoji}','${correct.emoji}')">${o.emoji}</div>`
+    ).join('');
+    
+    speakHebrew(correct.word);
+}
+
+function checkGame(el, picked, correct){
+    if(picked===correct){
+        el.classList.add('correct');
+        document.getElementById('successMsg').innerText = '🌟 כל הכבוד';
+        stars++;
+        localStorage.setItem('hebrewStars',stars);
+        addScore(document.getElementById('gameTarget').innerText, 1);
+        showStar();
+        mascotSuccess();
+        setTimeout(newGameRound, 2200);
+    } else {
+        el.classList.add('wrong');
+        addScore(document.getElementById('gameTarget').innerText, -1);
+        mascotEncourage();
+        setTimeout(()=>el.classList.remove('wrong'),600);
+    }
+}
+
+function openAAC(){showScreen('aacScreen');}
+
+// === NEW NAVIGATION ===
+function openCatMenu(){showScreen('catMenuScreen');}
+function openGameMenu(){showScreen('gameMenuScreen');}
+
+// === SHOP ===
+const shopItems = [
+    {id:'ribbon',name:'סרט ורוד',emoji:'🎀',price:3},
+    {id:'glasses',name:'משקפיים',emoji:'🕶️',price:5},
+    {id:'crown',name:'כתר',emoji:'👑',price:8},
+    {id:'star-sticker',name:'מדבקת כוכב',emoji:'⭐',price:2},
+    {id:'heart-sticker',name:'מדבקת לב',emoji:'💖',price:2},
+    {id:'teddy',name:'דובי',emoji:'🧸',price:10},
+    {id:'balloon',name:'בלון',emoji:'🎈',price:4},
+    {id:'flower',name:'פרח',emoji:'🌸',price:3},
+];
+
+function openShop(){
+    showScreen('shopScreen');
+    document.getElementById('shopStars').innerText = stars;
+    const grid = document.getElementById('shopGrid');
+    const owned = JSON.parse(localStorage.getItem('hebrewOwned')||'[]');
+    grid.innerHTML = shopItems.map(item=>{
+        const isOwned = owned.includes(item.id);
+        return `<div class="cat-card" style="${isOwned?'border-color:#D4F5E9;background:#F0FFF4':''}" onclick="buyItem('${item.id}',${item.price})">
+            <span class="cat-card-emoji">${item.emoji}</span>
+            <div class="cat-card-name">${item.name}</div>
+            <div style="font-size:0.8em;color:${isOwned?'#4CD964':'#999'};margin-top:4px">${isOwned?'✓ יש לי':'⭐ '+item.price}</div>
+        </div>`;
+    }).join('');
+}
+
+function buyItem(id, price){
+    const owned = JSON.parse(localStorage.getItem('hebrewOwned')||'[]');
+    if(owned.includes(id)) return;
+    if(stars >= price){
+        stars -= price;
+        owned.push(id);
+        localStorage.setItem('hebrewOwned',JSON.stringify(owned));
+        localStorage.setItem('hebrewStars',stars);
+        speakHebrew('כל הכבוד אדווה');
+        showStar();
+        openShop(); // Refresh
+    }
+}
+
+// === ALEF-BET GAME ===
+const alefbet = ['א','ב','ג','ד','ה','ו','ז','ח','ט','י','כ','ל','מ','נ','ס','ע','פ','צ','ק','ר','ש','ת'];
+const alefbetNames = {'א':'אלף','ב':'בית','ג':'גימל','ד':'דלת','ה':'הא','ו':'ואו','ז':'זין','ח':'חית','ט':'טית','י':'יוד','כ':'כף','ל':'למד','מ':'מם','נ':'נון','ס':'סמך','ע':'עין','פ':'פא','צ':'צדי','ק':'קוף','ר':'ריש','ש':'שין','ת':'תו'};
+
+function openAlefBet(){
+    showScreen('alefbetScreen');
+    newAlefBetRound();
+}
+
+function newAlefBetRound(){
+    const correct = alefbet[Math.floor(Math.random()*alefbet.length)];
+    let options = [correct];
+    while(options.length<4){
+        const r = alefbet[Math.floor(Math.random()*alefbet.length)];
+        if(!options.includes(r)) options.push(r);
+    }
+    options.sort(()=>Math.random()-0.5);
+    document.getElementById('abTarget').innerText = correct;
+    document.getElementById('abSuccess').innerText = '';
+    document.getElementById('abOptions').innerHTML = options.map(o=>
+        `<div class="game-option" style="font-size:2.5em" onclick="checkAB(this,'${o}','${correct}')">${o}</div>`
+    ).join('');
+    speakHebrew(alefbetNames[correct]);
+}
+
+function checkAB(el, picked, correct){
+    if(picked===correct){
+        el.classList.add('correct');
+        document.getElementById('abSuccess').innerText = '🌟 כל הכבוד';
+        stars++;localStorage.setItem('hebrewStars',stars);
+        showStar();mascotSuccess();
+        setTimeout(newAlefBetRound, 2000);
+    } else {
+        el.classList.add('wrong');
+        mascotEncourage();
+        setTimeout(()=>el.classList.remove('wrong'),500);
+    }
+}
+
+// === NUMBERS GAME ===
+const numbers = [{num:'1',name:'אחת'},{num:'2',name:'שתיים'},{num:'3',name:'שלוש'},{num:'4',name:'ארבע'},{num:'5',name:'חמש'},{num:'6',name:'שש'},{num:'7',name:'שבע'},{num:'8',name:'שמונה'},{num:'9',name:'תשע'},{num:'10',name:'עשר'}];
+
+function openNumbers(){
+    showScreen('numbersScreen');
+    newNumberRound();
+}
+
+function newNumberRound(){
+    const correct = numbers[Math.floor(Math.random()*numbers.length)];
+    let options = [correct];
+    while(options.length<4){
+        const r = numbers[Math.floor(Math.random()*numbers.length)];
+        if(!options.find(o=>o.num===r.num)) options.push(r);
+    }
+    options.sort(()=>Math.random()-0.5);
+    document.getElementById('numTarget').innerText = correct.num;
+    document.getElementById('numSuccess').innerText = '';
+    document.getElementById('numOptions').innerHTML = options.map(o=>
+        `<div class="game-option" style="font-size:2.5em" onclick="checkNum(this,'${o.num}','${correct.num}')">${o.num}</div>`
+    ).join('');
+    speakHebrew(correct.name);
+}
+
+function checkNum(el, picked, correct){
+    if(picked===correct){
+        el.classList.add('correct');
+        document.getElementById('numSuccess').innerText = '🌟 כל הכבוד';
+        stars++;localStorage.setItem('hebrewStars',stars);
+        showStar();mascotSuccess();
+        setTimeout(newNumberRound, 2000);
+    } else {
+        el.classList.add('wrong');
+        mascotEncourage();
+        setTimeout(()=>el.classList.remove('wrong'),500);
+    }
+}
+
+// === BUBBLE GAME ===
+function openBubbleGame(){
+    showScreen('bubbleScreen');
+    startBubbles();
+}
+
+function startBubbles(){
+    const area = document.getElementById('bubbleArea');
+    area.innerHTML = '';
+    for(let i=0;i<6;i++){
+        setTimeout(()=>createBubble(area),i*800);
+    }
+}
+
+function createBubble(area, words){
+    const allItems = Object.keys(categories).flatMap(c=>categories[c].items);
+    const item = allItems[Math.floor(Math.random()*allItems.length)];
+    const bubble = document.createElement('div');
+    bubble.style.cssText = `position:absolute;bottom:-100px;left:${Math.random()*70+10}%;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,0.85);display:flex;align-items:center;justify-content:center;font-size:2.5em;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.1);animation:bubble-float ${5+Math.random()*3}s linear forwards;border:3px solid rgba(255,214,231,0.6)`;
+    bubble.innerText = item.emoji;
+    bubble.onclick = ()=>{
+        // Pop animation
+        bubble.style.transform='scale(1.4)';
+        bubble.style.opacity='0';
+        bubble.style.transition='all 0.3s';
+        // Speak the word
+        const clean = item.word.replace(/[\u0591-\u05C7]/g,'');
+        speakHebrew(clean);
+        // Reward
+        stars++;
+        localStorage.setItem('hebrewStars',stars);
+        showStar();
+        setTimeout(()=>bubble.remove(),300);
+        setTimeout(()=>createBubble(area),800);
+    };
+    area.appendChild(bubble);
+    setTimeout(()=>{if(bubble.parentNode)bubble.remove();createBubble(area);},8000);
+}
+
+// Add bubble animation CSS
+const bubbleStyle = document.createElement('style');
+bubbleStyle.textContent = '@keyframes bubble-float{0%{transform:translateY(0)}100%{transform:translateY(-70vh)}}';
+document.head.appendChild(bubbleStyle);
+
+// === STAR ANIMATION ===
+function showStar(){
+    const s = document.createElement('div');
+    s.className='star-float';s.innerText='⭐';
+    s.style.left=Math.random()*60+20+'%';s.style.top='50%';
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(),1000);
+}
+
+// Load voices
+window.speechSynthesis.onvoiceschanged=()=>{};
+</script>
